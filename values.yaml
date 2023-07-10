@@ -280,17 +280,17 @@ web:
   config:
     # server/config.yml file content
     auth:
-      enabled: false # Temporal Web checks this first before reading your provider config
-      providers:
-      - label: 'Auth0 oidc' # for internal use; in future may expose as button text
-        type: oidc # for futureproofing; only oidc is supported today
-        issuer: https://myorg.us.auth0.com
-        client_id: xxxxxxxxxxxxxxxxxxxx
-        client_secret: xxxxxxxxxxxxxxxxxxxx
-        scope: openid,profile,email # must be comma separated
-        audience: # identifier of the audience for an issued token (optional)
-        callback_base_uri: http://localhost:8080/auth/sso/callback
-        pass_id_token: false # adds ID token as 'authorization-extras' header with every request to server
+      enabled: false
+      providers: # Currently supports only one provider (first one declared will be used)
+      - label: 'Auth0 OIDC' # Text used for internal purposes, may be exposed as button text in the future
+        type: oidc # Currently only OIDC (OpenID Connect) type is supported
+        issuer: https://myorg.us.auth0.com # URL of the OIDC provider
+        client_id: xxxxxxxxxxxxxxxxxxxx # Client ID for OIDC authentication
+        client_secret: xxxxxxxxxxxxxxxxxxxx # Client secret for OIDC authentication
+        scope: openid,profile,email # Comma-separated list of required scopes
+        audience: # Identifier of the audience for an issued token (optional)
+        callback_base_uri: http://localhost:8080/auth/sso/callback # Base URI for OIDC callback
+        pass_id_token: false # Set to true to include the ID token as 'authorization-extras' header with every request to the server
     routing:
       default_to_namespace: # internal use only
       issue_report_link: https://github.com/temporalio/web/issues/new/choose # set this field if you need to direct people to internal support forums
