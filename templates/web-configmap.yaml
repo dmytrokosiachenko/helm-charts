@@ -16,3 +16,32 @@ data:
     {{- toYaml .Values.web.config | nindent 4  }}
 
 {{- end }}
+---
+
+{{- if  .Values.web.config.auth.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "temporal.componentname" (list . "web") }}-config-auth
+  labels:
+    app.kubernetes.io/name: {{ include "temporal.name" . }}
+    helm.sh/chart: {{ include "temporal.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
+    app.kubernetes.io/component: web
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+data:
+  {{- $providers := .Values.web.config.auth.providers }}
+  {{- with index $providers 0 }}
+  TEMPORAL_AUTH_ENABLED: "true"
+  TEMPORAL_AUTH_LABEL: {{ .label }}
+  TEMPORAL_AUTH_TYPE: {{ .type }}
+  TEMPORAL_AUTH_PROVIDER_URL: {{ .issuer }}
+  TEMPORAL_AUTH_ISSUER_URL: {{ .issuer }}
+  TEMPORAL_AUTH_CLIENT_ID: {{ .client_id }}
+  TEMPORAL_AUTH_CLIENT_SECRET: {{ .client_secret }}
+  TEMPORAL_AUTH_CALLBACK_URL: {{ .callback_base_uri }}
+  TEMPORAL_AUTH_SCOPES: {{ .scope }}
+  {{- end }}
+{{- end }}

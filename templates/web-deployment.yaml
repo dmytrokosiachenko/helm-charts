@@ -45,6 +45,11 @@ spec:
         - name: {{ .Chart.Name }}-web
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- if  .Values.web.config.auth.enabled -}}
+          envFrom:
+            - configMapRef:
+                name: {{ include "temporal.componentname" (list . "web") }}-config-auth
+          {{- end }}
           env:
             - name: TEMPORAL_ADDRESS
               value: "{{ include "temporal.fullname" . }}-frontend.{{ .Release.Namespace }}.svc:{{ .Values.server.frontend.service.port }}"

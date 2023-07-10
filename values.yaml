@@ -280,7 +280,17 @@ web:
   config:
     # server/config.yml file content
     auth:
-      enabled: false
+      enabled: false # Temporal Web checks this first before reading your provider config
+      providers:
+      - label: 'Auth0 oidc' # for internal use; in future may expose as button text
+        type: oidc # for futureproofing; only oidc is supported today
+        issuer: https://myorg.us.auth0.com
+        client_id: xxxxxxxxxxxxxxxxxxxx
+        client_secret: xxxxxxxxxxxxxxxxxxxx
+        scope: openid,profile,email # must be comma separated
+        audience: # identifier of the audience for an issued token (optional)
+        callback_base_uri: http://localhost:8080/auth/sso/callback
+        pass_id_token: false # adds ID token as 'authorization-extras' header with every request to server
     routing:
       default_to_namespace: # internal use only
       issue_report_link: https://github.com/temporalio/web/issues/new/choose # set this field if you need to direct people to internal support forums
